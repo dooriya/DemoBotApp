@@ -1,7 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<parameters>
-  <parameter name="IIS Web Application Name" description="" value="Default Web Site/DemoBotApp" tags="IisApp">
-    <parameterEntry kind="ProviderPath" scope="IisApp" match="^C:\\Enlist\\DemoBotApp\\DemoBotApp\\obj\\Release\\Package\\PackageTmp$" />
-    <parameterEntry kind="ProviderPath" scope="setAcl" match="^C:\\Enlist\\DemoBotApp\\DemoBotApp\\obj\\Release\\Package\\PackageTmp$" />
-  </parameter>
-</parameters>

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http.Headers;
 using NAudio.Wave;
+using System.Web;
 
 namespace DemoBotApp.Controllers
 {
@@ -115,22 +116,29 @@ namespace DemoBotApp.Controllers
 
                 // Convert text to speech
                 HttpResponseMessage response = this.Request.CreateResponse(HttpStatusCode.OK);
+                MemoryStream outStream = new MemoryStream();
                 //response.Content = new StringContent(JsonConvert.SerializeObject(botResponse));
 
-                MemoryStream outStream = new MemoryStream();
-                this.ttsClient.OnAudioAvailable += (sender, stream) =>
+                if (botResponse.Text.Contains("Music.Play"))
                 {
-                    WaveFormat target = new WaveFormat(8000, 16, 2);
-                    using (WaveFormatConversionStream conversionStream = new WaveFormatConversionStream(target, new WaveFileReader(stream)))
+                    outStream = (MemoryStream)SampleMusic.GetStream();
+                }
+                else
+                {
+                    this.ttsClient.OnAudioAvailable += (sender, stream) =>
                     {
-                        WaveFileWriter.WriteWavFileToStream(outStream, conversionStream);
-                        outStream.Position = 0;
-                    }
+                        WaveFormat target = new WaveFormat(8000, 16, 2);
+                        using (WaveFormatConversionStream conversionStream = new WaveFormatConversionStream(target, new WaveFileReader(stream)))
+                        {
+                            WaveFileWriter.WriteWavFileToStream(outStream, conversionStream);
+                            outStream.Position = 0;
+                        }
 
-                    stream.Dispose();
-                };
+                        stream.Dispose();
+                    };
 
-                await ttsClient.SynthesizeTextAsync(botResponse.Text, CancellationToken.None);
+                    await ttsClient.SynthesizeTextAsync(botResponse.Text, CancellationToken.None);
+                }                
 
                 response.Content = new StreamContent(outStream);
                 response.Content.Headers.ContentLength = outStream.Length;
@@ -151,8 +159,8 @@ namespace DemoBotApp.Controllers
             // Convert text to speech
             HttpResponseMessage response = this.Request.CreateResponse(HttpStatusCode.OK);
 
-
             MemoryStream outStream = new MemoryStream();
+            /*
             this.ttsClient.OnAudioAvailable += (sender, stream) =>
             {
                 WaveFormat target = new WaveFormat(8000, 16, 2);
@@ -170,6 +178,11 @@ namespace DemoBotApp.Controllers
             response.Content = new StreamContent(outStream);
             response.Content.Headers.ContentLength = outStream.Length;
             response.Content.Headers.ContentType = new MediaTypeHeaderValue("audio/x-wav");
+            */
+
+           
+            string message = System.Web.Hosting.HostingEnvironment.MapPath("~/musicsample.wav");
+            response.Content = new StringContent($"Current dir: {message}");
 
             return response;
 

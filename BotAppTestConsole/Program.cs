@@ -43,15 +43,8 @@ namespace BotAppTestConsole
                 {
                     //var response = await httpclient.PostAsync("http://devkitdemobotapp.azurewebsites.net/conversation/JbgF8Sr8VxI2w4sGWM0iab", binaryContent);
                     var response = await httpclient.PostAsync("http://devkitdemobotapp.azurewebsites.net/conversation/test", null);
+
                     var stream = await response.Content.ReadAsStreamAsync();
-
-                    /*
-                    if (!File.Exists(wavFilePath))
-                    {
-                        File.Create(wavFilePath);
-                    }
-                    */
-
                     using (FileStream fs = new FileStream(wavFilePath, FileMode.Create))
                     {
                         stream.CopyTo(fs);
@@ -74,7 +67,6 @@ namespace BotAppTestConsole
                     }
 
                     var int16Array = int16Data.ToArray();
-
                     using (var sw = new StreamWriter(@"C:\IoT\Voice\TTSResult-3.txt"))
                     {
                         for (int i = 0; i < int16Array.Length; i++)

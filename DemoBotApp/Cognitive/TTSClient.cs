@@ -99,7 +99,7 @@
                                       new XAttribute(XNamespace.Xml + "gender", gender),
                                       new XAttribute("name", name),
                                       new XElement("prosody",
-                                      new XAttribute("rate", "+10.00%"),
+                                      new XAttribute("rate", "+18.00%"),
                                       new XAttribute("volume", "-20.00%"),
                                       text))));
             return ssmlDoc.ToString();
