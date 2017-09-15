@@ -171,6 +171,7 @@
     <Compile Include="Cognitive\SynthesisOptions.cs" />
     <Compile Include="Cognitive\TTSClient.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
+    <Compile Include="Controllers\WebsocketController.cs" />
     <Compile Include="Controllers\VoiceCommandController.cs" />
     <Compile Include="DemoBotServiceException.cs" />
     <Compile Include="Global.asax.cs">
@@ -186,7 +187,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Properties\PublishProfiles\DevKitDemoBotApp - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
