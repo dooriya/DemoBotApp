@@ -138,7 +138,7 @@ namespace DemoBotApp.Controllers
                     };
 
                     await ttsClient.SynthesizeTextAsync(botResponse.Text, CancellationToken.None);
-                }                
+                }
 
                 response.Content = new StreamContent(outStream);
                 response.Content.Headers.ContentLength = outStream.Length;

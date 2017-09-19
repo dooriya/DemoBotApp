@@ -41,23 +41,29 @@ namespace BotAppTestConsole
         {
             using (ClientWebSocket webSocketClient = new ClientWebSocket())
             {
-                Uri serverUri = new Uri("ws://demobotapp-sandbox.azurewebsites.net/chat?nickName=dol");
+                Uri serverUri = new Uri("ws://demobotapp-sandbox.azurewebsites.net/chat?nickName=aaa");
                 await webSocketClient.ConnectAsync(serverUri, CancellationToken.None);
 
                 List<byte> totalReceived = new List<byte>();
+                ArraySegment<byte> receivedBuffer = new ArraySegment<byte>(new byte[1024 * 10]);
+                WebSocketReceiveResult receiveResult;
+
                 while (webSocketClient.State == WebSocketState.Open)
                 {
                     // Send text message to server
-                    string sendMsg = "testws";
+                    string sendMsg = "test";
                     ArraySegment<byte> bytesToSend = new ArraySegment<byte>(Encoding.UTF8.GetBytes(sendMsg));
                     await webSocketClient.SendAsync(bytesToSend, WebSocketMessageType.Text, true, CancellationToken.None);
 
                     // Receive message from server
-                    totalReceived.Clear();
-                    ArraySegment<byte> receivedBuffer = new ArraySegment<byte>(new byte[1024*10]);
-                    WebSocketReceiveResult receiveResult = await webSocketClient.ReceiveAsync(receivedBuffer, CancellationToken.None);
-                    MergeFrameContent(totalReceived, receivedBuffer.Array, receivedBuffer.Count);
+                    // receive connect ack message
+                    //receiveResult = await webSocketClient.ReceiveAsync(receivedBuffer, CancellationToken.None);
                     //Console.WriteLine(Encoding.UTF8.GetString(receivedBuffer.Array, 0, receiveResult.Count));
+
+                    // receive binary
+                    totalReceived.Clear();
+                    receiveResult = await webSocketClient.ReceiveAsync(receivedBuffer, CancellationToken.None);
+                    MergeFrameContent(totalReceived, receivedBuffer.Array, receiveResult.Count);
 
                     try
                     {
@@ -79,6 +85,14 @@ namespace BotAppTestConsole
                     catch (Exception e)
                     {
                         Console.WriteLine(e.ToString());
+                        //webSocketClient.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None).Wait();
+                    }
+                    finally
+                    {
+                        if (webSocketClient.State == WebSocketState.Open)
+                        {
+                            //webSocketClient.CloseAsync(WebSocketCloseStatus.NormalClosure, "", CancellationToken.None).Wait();
+                        }
                     }
 
                     Thread.Sleep(6000);

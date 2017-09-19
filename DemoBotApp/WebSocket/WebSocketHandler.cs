@@ -15,7 +15,9 @@
 
         public event EventHandler OnOpened;
 
-        public event EventHandler<string> OnMessageReceived;
+        public event EventHandler<string> OnTextMessageReceived;
+
+        public event EventHandler<byte[]> OnBinaryMessageReceived;
 
         public event EventHandler OnClosed;
 
@@ -92,11 +94,9 @@
                 int remainingBytes = bytes.Length - sentBytes;
                 bool isEndOfMessage = remainingBytes > FrameBytesCount ? false : true;
 
-                
                 await webSocket.SendAsync(
                     //new ArraySegment<byte>(bytes, 0, FrameBytesCount),
                     new ArraySegment<byte>(bytes, sentBytes, remainingBytes > FrameBytesCount ? FrameBytesCount : remainingBytes),
-                    //new ArraySegment<byte>(Encoding.UTF8.GetBytes($"chunk: {FrameBytesCount}")),
                     WebSocketMessageType.Binary,
                     isEndOfMessage,
                     CancellationToken.None);
@@ -140,15 +140,15 @@
 
         protected void RaiseMessageArrive(byte[] buffer, WebSocketMessageType type, long count)
         {
-            if (OnMessageReceived != null)
+            if (OnTextMessageReceived != null)
             {
                 switch (type)
                 {
                     case WebSocketMessageType.Text:
-                        OnMessageReceived(this, Encoding.UTF8.GetString(buffer));
+                        OnTextMessageReceived(this, Encoding.UTF8.GetString(buffer));
                         break;
                     case WebSocketMessageType.Binary:
-                        // TODO: handle binary message from client
+                        OnBinaryMessageReceived(this, buffer);
                         break;
                 }
             }
