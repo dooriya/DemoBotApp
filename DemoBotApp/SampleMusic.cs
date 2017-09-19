@@ -5,25 +5,25 @@
 
     public class SampleMusic
     {
-        private static MemoryStream audioStream = null;
+        private static MemoryStream audioStream = new MemoryStream();
+        private static byte[] audioBytes;
 
         static SampleMusic()
         {
             audioStream = new MemoryStream();
-            string sampleMusicFilePath = HostingEnvironment.MapPath("~/musicsample.wav");
-
+            //string sampleMusicFilePath = HostingEnvironment.MapPath("~/musicsample.wav");
+            string sampleMusicFilePath = @" D:\home\site\wwwroot\musicsample.wav";
             if (File.Exists(sampleMusicFilePath))
             {
-                using (FileStream fs = new FileStream(sampleMusicFilePath, FileMode.Open))
-                {
-                    fs.CopyTo(audioStream);
-                    audioStream.Position = 0;
-                }
+                audioBytes = File.ReadAllBytes(sampleMusicFilePath);
             }           
         }
 
         public static Stream GetStream()
         {
+            audioStream = new MemoryStream();
+            audioStream.Write(audioBytes, 0, audioBytes.Length);
+            audioStream.Position = 0;
             return audioStream;
         }
 

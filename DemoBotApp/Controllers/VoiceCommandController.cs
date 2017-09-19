@@ -21,7 +21,7 @@ namespace DemoBotApp.Controllers
         private static readonly Uri ShortPhraseUrl = new Uri(@"wss://speech.platform.bing.com/api/service/recognition");
         private static readonly Uri LongDictationUrl = new Uri(@"wss://speech.platform.bing.com/api/service/recognition/continuous");
         private static readonly Uri SpeechSynthesisUrl = new Uri("https://speech.platform.bing.com/synthesize");
-        private static readonly string CognitiveSubscriptionKey = "0dacf765a706415da303f1615cd467a9";
+        private static readonly string CognitiveSubscriptionKey = "16a433c4b68241dbb136447a324be771";
 
         private readonly CancellationTokenSource cts = new CancellationTokenSource();
         private readonly Task completedTask = Task.FromResult(true);
@@ -32,8 +32,10 @@ namespace DemoBotApp.Controllers
         private string commandText;
 
         private DirectLineClient directLineClient;
-        private static readonly string DirectLineSecret = "41bYaJO2zw4.cwA.aLs.d5q5HkxjIEGjy8GnYDBjrmdeI1g_e23j7_ABryHdPTA";
-        private static readonly string BotId = "doltravelbot";
+        //private static readonly string DirectLineSecret = "41bYaJO2zw4.cwA.aLs.d5q5HkxjIEGjy8GnYDBjrmdeI1g_e23j7_ABryHdPTA";
+        //private static readonly string BotId = "doltravelbot";
+        private static readonly string DirectLineSecret = "HY6eguA5VH8.cwA.Hs0.36pUL-4FWqmTNcckkkJ75_QIF_MjKizLN3zQVSpGO_8";
+        private static readonly string BotId = "demobotservice-eas";
         private static readonly string FromUserId = "TestUser";
 
         public VoiceCommandController()

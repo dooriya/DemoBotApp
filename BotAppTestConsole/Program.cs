@@ -42,9 +42,10 @@ namespace BotAppTestConsole
                 using (var binaryContent = new StreamContent(File.OpenRead(@"C:\\IoT\\Voice\\STTTest-2.wav")))
                 {
                     //var response = await httpclient.PostAsync("http://devkitdemobotapp.azurewebsites.net/conversation/JbgF8Sr8VxI2w4sGWM0iab", binaryContent);
-                    var response = await httpclient.PostAsync("http://devkitdemobotapp.azurewebsites.net/conversation/test", null);
+                    var response = await httpclient.PostAsync("http://devkitdemobotapp-eas.azurewebsites.net/conversation/test", null);
 
                     var stream = await response.Content.ReadAsStreamAsync();
+                    /*
                     using (FileStream fs = new FileStream(wavFilePath, FileMode.Create))
                     {
                         stream.CopyTo(fs);
@@ -78,7 +79,7 @@ namespace BotAppTestConsole
                             sw.Write($"{int16Array[i].ToString()},");
                         }
                     }
-
+                    */
                     
                     SoundPlayer player = new SoundPlayer(stream);
                     player.PlaySync();
@@ -98,5 +99,9 @@ namespace BotAppTestConsole
             }
         }
 
+        private static void TestWebSocket()
+        {
+
+        }
     }
 }
