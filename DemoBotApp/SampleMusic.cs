@@ -21,10 +21,10 @@
 
         public static Stream GetStream()
         {
-            audioStream = new MemoryStream();
-            audioStream.Write(audioBytes, 0, audioBytes.Length);
-            audioStream.Position = 0;
-            return audioStream;
+            MemoryStream ms = new MemoryStream();
+            ms.Write(audioBytes, 0, audioBytes.Length);
+            ms.Position = 0;
+            return ms;
         }
 
         ~SampleMusic()

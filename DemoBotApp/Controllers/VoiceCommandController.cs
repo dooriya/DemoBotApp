@@ -15,7 +15,7 @@ using System.Web;
 
 namespace DemoBotApp.Controllers
 {
-    [RoutePrefix("")]
+    [RoutePrefix("conversation")]
     public class VoiceCommandController : ApiController
     {
         private static readonly Uri ShortPhraseUrl = new Uri(@"wss://speech.platform.bing.com/api/service/recognition");
@@ -32,8 +32,6 @@ namespace DemoBotApp.Controllers
         private string commandText;
 
         private DirectLineClient directLineClient;
-        //private static readonly string DirectLineSecret = "41bYaJO2zw4.cwA.aLs.d5q5HkxjIEGjy8GnYDBjrmdeI1g_e23j7_ABryHdPTA";
-        //private static readonly string BotId = "doltravelbot";
         private static readonly string DirectLineSecret = "HY6eguA5VH8.cwA.Hs0.36pUL-4FWqmTNcckkkJ75_QIF_MjKizLN3zQVSpGO_8";
         private static readonly string BotId = "demobotservice-eas";
         private static readonly string FromUserId = "TestUser";
@@ -54,7 +52,7 @@ namespace DemoBotApp.Controllers
         }
 
         [HttpPost]
-        [Route("conversation")]
+        [Route("")]
         public async Task<HttpResponseMessage> StartConversation()
         {
             Conversation conversation = await this.directLineClient.Conversations.StartConversationAsync();
@@ -67,7 +65,7 @@ namespace DemoBotApp.Controllers
         }
 
         [HttpPost]
-        [Route("conversation/{conversationId}")]
+        [Route("{conversationId}")]
         public async Task<HttpResponseMessage> SendVoiceCommand(string conversationId, string watermark = null)
         {
             if (string.IsNullOrEmpty(conversationId))
@@ -155,7 +153,7 @@ namespace DemoBotApp.Controllers
         }
 
         [HttpPost]
-        [Route("conversation/test")]
+        [Route("test")]
         public async Task<HttpResponseMessage> Test()
         {
             // Convert text to speech

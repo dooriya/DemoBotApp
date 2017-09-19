@@ -4,6 +4,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Media;
 using System.Net.Http;
+using System.Net.WebSockets;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using DemoBotApp;
@@ -31,7 +33,74 @@ namespace BotAppTestConsole
 
         static void Main(string[] args)
         {
-            DevKitDemoAppTest().Wait();
+            TestWebSocket().Wait();
+            //DevKitDemoAppTest().Wait();
+        }
+
+        private static async Task TestWebSocket()
+        {
+            using (ClientWebSocket webSocketClient = new ClientWebSocket())
+            {
+                Uri serverUri = new Uri("ws://demobotapp-sandbox.azurewebsites.net/chat?nickName=dol");
+                await webSocketClient.ConnectAsync(serverUri, CancellationToken.None);
+
+                List<byte> totalReceived = new List<byte>();
+                while (webSocketClient.State == WebSocketState.Open)
+                {
+                    // Send text message to server
+                    string sendMsg = "testws";
+                    ArraySegment<byte> bytesToSend = new ArraySegment<byte>(Encoding.UTF8.GetBytes(sendMsg));
+                    await webSocketClient.SendAsync(bytesToSend, WebSocketMessageType.Text, true, CancellationToken.None);
+
+                    // Receive message from server
+                    totalReceived.Clear();
+                    ArraySegment<byte> receivedBuffer = new ArraySegment<byte>(new byte[1024*10]);
+                    WebSocketReceiveResult receiveResult = await webSocketClient.ReceiveAsync(receivedBuffer, CancellationToken.None);
+                    MergeFrameContent(totalReceived, receivedBuffer.Array, receivedBuffer.Count);
+                    //Console.WriteLine(Encoding.UTF8.GetString(receivedBuffer.Array, 0, receiveResult.Count));
+
+                    try
+                    {
+                        while (webSocketClient.State == WebSocketState.Open && !receiveResult.EndOfMessage)
+                        {
+                            receiveResult = await webSocketClient.ReceiveAsync(receivedBuffer, CancellationToken.None);
+
+                            MergeFrameContent(totalReceived, receivedBuffer.Array, receiveResult.Count);
+                            Console.WriteLine($"Received: {receiveResult.Count}, total: {totalReceived.Count}");
+                        }
+
+                        //BytesToFile(totalReceived.ToArray(), @"c:\IoT\Voice\ws-routput.wav");
+                        using (MemoryStream ms = new MemoryStream(totalReceived.ToArray()))
+                        {
+                            SoundPlayer player = new SoundPlayer(ms);
+                            player.Play();
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.ToString());
+                    }
+
+                    Thread.Sleep(6000);
+                }
+            }
+        }
+
+        private static void MergeFrameContent(List<Byte> destBuffer, byte[] buffer, long count)
+        {
+            count = count < buffer.Length ? count : buffer.Length;
+
+            if (count == buffer.Length)
+            {
+                destBuffer.AddRange(buffer);
+            }
+            else
+            {
+                var frameBuffer = new byte[count];
+                Array.Copy(buffer, frameBuffer, count);
+
+                destBuffer.AddRange(frameBuffer);
+            }
         }
 
         private static async Task DevKitDemoAppTest()
@@ -99,9 +168,12 @@ namespace BotAppTestConsole
             }
         }
 
-        private static void TestWebSocket()
+        private static void BytesToFile(byte[] bytes, string filePath)
         {
-
+            using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write))
+            {
+                fs.Write(bytes, 0, bytes.Length);
+            }
         }
     }
 }
